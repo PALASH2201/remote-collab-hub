@@ -18,14 +18,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequest {
-    private UUID projectId;
-    private UUID sprintId;
     private UUID assigneeId;
     private String taskTitle;
     private String taskDesc;
-    @Enumerated(EnumType.STRING)
     private Status taskStatus;
-    @Enumerated(EnumType.STRING)
     private Priority taskPriority;
     private Date dueDate;
 }

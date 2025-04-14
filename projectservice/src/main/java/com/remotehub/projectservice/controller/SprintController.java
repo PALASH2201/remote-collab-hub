@@ -1,6 +1,7 @@
 package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.SprintRequest;
+import com.remotehub.projectservice.dto.response.SprintResponse;
 import com.remotehub.projectservice.entity.Sprint;
 import com.remotehub.projectservice.service.SprintService;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class SprintController {
     }
 
     @GetMapping("/{sprintId}")
-    public ResponseEntity<Sprint> getSprint(@PathVariable UUID sprintId){
-        Sprint sprint = sprintService.getSprintById(sprintId);
+    public ResponseEntity<SprintResponse> getSprint(@PathVariable UUID sprintId){
+        SprintResponse sprint = sprintService.getSprintById(sprintId);
         return ResponseEntity.status(200).body(sprint);
     }
 
@@ -43,8 +44,8 @@ public class SprintController {
     }
 
     @GetMapping("/projects/{projectId}/sprints")
-    public ResponseEntity<List<Sprint>> getSprints(@PathVariable UUID projectId){
-        List<Sprint> list = sprintService.getSprintsByProjectId(projectId);
+    public ResponseEntity<List<SprintResponse>> getSprints(@PathVariable UUID projectId){
+        List<SprintResponse> list = sprintService.getSprintsByProjectId(projectId);
         return ResponseEntity.status(200).body(list);
     }
 }

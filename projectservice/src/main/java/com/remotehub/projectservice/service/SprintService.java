@@ -1,6 +1,8 @@
 package com.remotehub.projectservice.service;
 
+import com.remotehub.projectservice.dto.mapper.SprintMapper;
 import com.remotehub.projectservice.dto.request.SprintRequest;
+import com.remotehub.projectservice.dto.response.SprintResponse;
 import com.remotehub.projectservice.entity.Project;
 import com.remotehub.projectservice.entity.Sprint;
 import com.remotehub.projectservice.exceptions.ErrorCreatingEntry;
@@ -23,10 +25,12 @@ import java.util.UUID;
 public class SprintService {
     private final SprintRepository sprintRepository;
     private final ProjectRepository projectRepository;
+    private final SprintMapper sprintMapper;
     
-    public SprintService(SprintRepository sprintRepository, ProjectRepository projectRepository) {
+    public SprintService(SprintRepository sprintRepository, ProjectRepository projectRepository, SprintMapper sprintMapper) {
         this.sprintRepository = sprintRepository;
         this.projectRepository = projectRepository;
+        this.sprintMapper = sprintMapper;
     }
     
     @Transactional
@@ -53,9 +57,10 @@ public class SprintService {
         }
     }
 
-    public Sprint getSprintById(UUID sprintId) {
-        return sprintRepository.findById(sprintId)
+    public SprintResponse getSprintById(UUID sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(()->new ResourceNotFoundException("Cannot find sprint with id : "+sprintId));
+        return sprintMapper.toSprintResponse(sprint);
     }
 
     @Transactional
@@ -73,9 +78,13 @@ public class SprintService {
     }
 
     public void deleteSprint(UUID sprintId) {
-        sprintRepository.findById(sprintId)
+        Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(()->new ResourceNotFoundException("Cannot find sprint with id : "+sprintId));
         try{
+            if(sprint.getProject() != null){
+                Project p = sprint.getProject();
+                p.getSprintList().remove(sprint);
+            }
             sprintRepository.deleteById(sprintId);
         } catch (Exception e){
             log.error("Error deleting sprint with id : {}",sprintId);
@@ -83,11 +92,15 @@ public class SprintService {
         }
     }
 
-    public List<Sprint> getSprintsByProjectId(UUID projectId) {
+    public List<SprintResponse> getSprintsByProjectId(UUID projectId) {
         try{
             List<Sprint> list = sprintRepository.findSprintByProjectId(projectId);
             if(list == null || list.isEmpty()) throw new RuntimeException();
-            return list;
+            List<SprintResponse> sprintResponses = new ArrayList<>();
+            for(Sprint s : list){
+                sprintResponses.add(sprintMapper.toSprintResponse(s));
+            }
+            return sprintResponses;
         } catch (Exception e){
             log.error("Cannot find projects for sprint with id : {}",projectId);
             throw new ResourceNotFoundException("Cannot find projects for sprint with id : "+projectId);

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -13,7 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SprintResponse {
+    private UUID sprintId;
     private UUID projectId;
+    private List<TaskResponse> taskList;
     private UUID sprintCreator;
     private String sprintName;
     private String sprintGoal;

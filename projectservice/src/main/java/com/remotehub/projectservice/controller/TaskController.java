@@ -1,6 +1,7 @@
 package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.TaskRequest;
+import com.remotehub.projectservice.dto.response.TaskResponse;
 import com.remotehub.projectservice.entity.Task;
 import com.remotehub.projectservice.service.TaskService;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<Task> getTask(@PathVariable UUID taskId){
-        Task task = taskService.getTaskById(taskId);
+    public ResponseEntity<TaskResponse> getTask(@PathVariable UUID taskId){
+        TaskResponse task = taskService.getTaskById(taskId);
         return ResponseEntity.status(200).body(task);
     }
 

@@ -1,6 +1,7 @@
 package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.ProjectRequest;
+import com.remotehub.projectservice.dto.response.ProjectResponse;
 import com.remotehub.projectservice.entity.Project;
 import com.remotehub.projectservice.service.ProjectService;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,9 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProject(@PathVariable UUID projectId){
-        Project project = projectService.getProjectById(projectId);
-        return ResponseEntity.status(200).body(project);
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable UUID projectId){
+        ProjectResponse projectResponse = projectService.getProjectById(projectId);
+        return ResponseEntity.status(200).body(projectResponse);
     }
 
     @PutMapping("/{projectId}")
@@ -43,8 +44,8 @@ public class ProjectController {
     }
 
     @GetMapping("/teams/{teamId}/projects")
-    public ResponseEntity<List<Project>> getProjects(@PathVariable UUID teamId){
-        List<Project> list = projectService.getProjectsByTeamId(teamId);
+    public ResponseEntity<List<ProjectResponse>> getProjects(@PathVariable UUID teamId){
+        List<ProjectResponse> list = projectService.getProjectsByTeamId(teamId);
         return ResponseEntity.status(200).body(list);
     }
 }

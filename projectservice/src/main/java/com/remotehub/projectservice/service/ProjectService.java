@@ -1,6 +1,8 @@
 package com.remotehub.projectservice.service;
 
+import com.remotehub.projectservice.dto.mapper.ProjectMapper;
 import com.remotehub.projectservice.dto.request.ProjectRequest;
+import com.remotehub.projectservice.dto.response.ProjectResponse;
 import com.remotehub.projectservice.entity.Project;
 import com.remotehub.projectservice.exceptions.ErrorCreatingEntry;
 import com.remotehub.projectservice.exceptions.ErrorDeletingEntry;
@@ -20,9 +22,11 @@ import java.util.UUID;
 @Slf4j
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectMapper projectMapper;
     
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
+        this.projectMapper = projectMapper;
     }
 
     @Transactional
@@ -46,9 +50,10 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project getProjectById(UUID projectId) {
-        return projectRepository.findById(projectId)
+    public ProjectResponse getProjectById(UUID projectId) {
+        Project project = projectRepository.findById(projectId)
                 .orElseThrow(()->new ResourceNotFoundException("Cannot find project with id : "+projectId));
+        return projectMapper.toProjectResponse(project);
     }
 
     @Transactional
@@ -82,11 +87,15 @@ public class ProjectService {
     }
 
     @Transactional
-    public List<Project> getProjectsByTeamId(UUID teamId) {
+    public List<ProjectResponse> getProjectsByTeamId(UUID teamId) {
         try{
             List<Project> list = projectRepository.findProjectByTeamId(teamId);
             if(list == null || list.isEmpty()) throw new RuntimeException();
-            return list;
+            List<ProjectResponse> projectResponseList = new ArrayList<>();
+            for(Project p : list){
+                projectResponseList.add(projectMapper.toProjectResponse(p));
+            }
+            return projectResponseList;
         } catch (Exception e){
             log.error("Cannot find projects for team with id : {}",teamId);
             throw new ResourceNotFoundException("Cannot find projects for team with team id : "+teamId);
