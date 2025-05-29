@@ -17,6 +17,7 @@ public interface ProjectMapper {
 
     ProjectResponse toProjectResponse(Project project);
 
+    @Mapping(target = "projectId" , source = "project.projectId")
     SprintResponse toSprintResponse(Sprint sprint);
     List<SprintResponse> toSprintResponseList(List<Sprint> sprint);
 

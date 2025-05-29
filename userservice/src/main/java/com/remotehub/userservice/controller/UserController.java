@@ -1,13 +1,10 @@
 package com.remotehub.userservice.controller;
 
 import com.remotehub.userservice.dto.response.TeamResponseDto;
+import com.remotehub.userservice.dto.response.UserResponseDto;
 import com.remotehub.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,5 +28,11 @@ public class UserController {
     public ResponseEntity<List<TeamResponseDto>> getTeams(){
         List<TeamResponseDto> list = userService.getTeams();
         return ResponseEntity.status(200).body(list);
+    }
+
+    @GetMapping()
+    public ResponseEntity<UserResponseDto> getUser(){
+        UserResponseDto user = userService.getUser();
+        return ResponseEntity.status(200).body(user);
     }
 }

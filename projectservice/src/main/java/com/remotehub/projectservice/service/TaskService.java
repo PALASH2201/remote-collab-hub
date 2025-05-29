@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +52,8 @@ public class TaskService {
             task.setProject(project);
             task.setAssigneeId(taskRequest.getAssigneeId());
             task.setDueDate(taskRequest.getDueDate());
+            task.setCreatedAt(LocalDateTime.now());
+            task.setUpdatedAt(LocalDateTime.now());
             Task saved = taskRepository.save(task);
             
             List<Task> oldList = project.getTaskList();
@@ -80,6 +83,7 @@ public class TaskService {
             dbTask.setTaskPriority(taskRequest.getTaskPriority());
             dbTask.setAssigneeId(taskRequest.getAssigneeId());
             dbTask.setDueDate(taskRequest.getDueDate());
+            dbTask.setUpdatedAt(LocalDateTime.now());
             taskRepository.save(dbTask);
         } catch (Exception e){
             log.error("Error updating task with id : {}",taskId);

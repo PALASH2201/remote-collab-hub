@@ -57,6 +57,7 @@ public class SprintService {
         }
     }
 
+    @Transactional
     public SprintResponse getSprintById(UUID sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(()->new ResourceNotFoundException("Cannot find sprint with id : "+sprintId));
@@ -77,6 +78,7 @@ public class SprintService {
         }
     }
 
+    @Transactional
     public void deleteSprint(UUID sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(()->new ResourceNotFoundException("Cannot find sprint with id : "+sprintId));
@@ -92,6 +94,7 @@ public class SprintService {
         }
     }
 
+    @Transactional
     public List<SprintResponse> getSprintsByProjectId(UUID projectId) {
         try{
             List<Sprint> list = sprintRepository.findSprintByProjectId(projectId);
