@@ -31,6 +31,7 @@ public class SpringSecurity {
                 http
                         .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/teams/exists/**").permitAll()
                         .requestMatchers("/teams/**").authenticated()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)

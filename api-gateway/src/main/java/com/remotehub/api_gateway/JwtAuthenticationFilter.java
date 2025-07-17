@@ -61,10 +61,11 @@ public class JwtAuthenticationFilter implements GlobalFilter {
                     .mutate()
                     .header("X-User-Email", userId)
                     .build();
-
+            log.info("Authorized");
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
         } catch (JwtException e) {
+            log.error("Not Authorized!");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }

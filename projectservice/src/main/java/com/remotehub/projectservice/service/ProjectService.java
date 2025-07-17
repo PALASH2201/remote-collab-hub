@@ -8,9 +8,12 @@ import com.remotehub.projectservice.exceptions.ErrorCreatingEntry;
 import com.remotehub.projectservice.exceptions.ErrorDeletingEntry;
 import com.remotehub.projectservice.exceptions.ErrorUpdatingEntry;
 import com.remotehub.projectservice.exceptions.ResourceNotFoundException;
+import com.remotehub.projectservice.feign.ProjectInterface;
 import com.remotehub.projectservice.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,14 +26,20 @@ import java.util.UUID;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final ProjectInterface projectInterface;
+    private final HttpStatusCode statusCode;
     
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper) {
+    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, ProjectInterface projectInterface) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
+        this.projectInterface = projectInterface;
+        this.statusCode = HttpStatusCode.valueOf(200);
     }
 
     @Transactional
     public void addNewProject(ProjectRequest projectRequest) {
+        ResponseEntity<Boolean> resp = projectInterface.checkIfTeamExists(projectRequest.getTeamId());
+        if(!statusCode.isSameCodeAs(resp.getStatusCode())) throw new ResourceNotFoundException("Cannot find team with id: "+projectRequest.getTeamId());
         try{
             Project project = new Project();
             project.setTeamId(projectRequest.getTeamId());

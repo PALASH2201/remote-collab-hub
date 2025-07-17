@@ -26,6 +26,14 @@ public class TeamController {
         return ResponseEntity.status(201).body("Success");
     }
 
+    @GetMapping("/exists/{teamId}")
+    public ResponseEntity<Boolean> checkIfTeamExists(@PathVariable UUID teamId){
+        boolean flag = teamService.getTeamById(teamId) != null;
+        if(flag) return ResponseEntity.status(200).body(flag);
+        else return ResponseEntity.status(404).body(flag);
+    }
+
+
     @GetMapping("/{teamId}")
     public ResponseEntity<TeamResponseDto> getTeam(@PathVariable UUID teamId){
         TeamResponseDto team = teamService.getTeamById(teamId);
