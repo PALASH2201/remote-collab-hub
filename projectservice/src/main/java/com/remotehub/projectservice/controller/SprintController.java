@@ -2,7 +2,6 @@ package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.SprintRequest;
 import com.remotehub.projectservice.dto.response.SprintResponse;
-import com.remotehub.projectservice.entity.Sprint;
 import com.remotehub.projectservice.service.SprintService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +10,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/sprint")
 public class SprintController {
     private final SprintService sprintService;
+    private static final String SUCCESS_MSG = "Success";
 
     public SprintController(SprintService sprintService){
         this.sprintService = sprintService;
@@ -23,7 +22,7 @@ public class SprintController {
     @PostMapping("/projects/{projectId}/sprint")
     public ResponseEntity<String> addNewSprint(@PathVariable UUID projectId , @RequestBody SprintRequest sprintRequest){
         sprintService.addNewSprint(projectId,sprintRequest);
-        return ResponseEntity.status(201).body("Success");
+        return ResponseEntity.status(201).body(SUCCESS_MSG);
     }
 
     @GetMapping("/{sprintId}")
@@ -35,13 +34,13 @@ public class SprintController {
     @PutMapping("/{sprintId}")
     public ResponseEntity<String> updateSprint(@PathVariable UUID sprintId , @RequestBody SprintRequest sprintRequest){
         sprintService.updateSprint(sprintId,sprintRequest);
-        return ResponseEntity.status(201).body("Success");
+        return ResponseEntity.status(201).body(SUCCESS_MSG);
     }
 
     @DeleteMapping("/{sprintId}")
     public ResponseEntity<String> deleteSprint(@PathVariable UUID sprintId){
         sprintService.deleteSprint(sprintId);
-        return ResponseEntity.status(204).body("Success");
+        return ResponseEntity.status(204).body(SUCCESS_MSG);
     }
 
     @GetMapping("/projects/{projectId}/sprints")

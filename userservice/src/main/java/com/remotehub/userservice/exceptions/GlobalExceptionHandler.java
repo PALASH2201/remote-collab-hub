@@ -2,7 +2,6 @@ package com.remotehub.userservice.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -27,5 +26,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ErrorDeletingEntry.class)
     public ResponseEntity<String> handleErrorDeletingEntry(ErrorCreatingEntry ex){
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ExpiredInviteError.class)
+    public ResponseEntity<String> handleExpiredInviteError(ExpiredInviteError ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
 }

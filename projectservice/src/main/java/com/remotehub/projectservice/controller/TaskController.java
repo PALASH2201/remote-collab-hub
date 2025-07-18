@@ -2,16 +2,12 @@ package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.TaskRequest;
 import com.remotehub.projectservice.dto.response.TaskResponse;
-import com.remotehub.projectservice.entity.Task;
 import com.remotehub.projectservice.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/task")
 public class TaskController {
     private final TaskService taskService;
