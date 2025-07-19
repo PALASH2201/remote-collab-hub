@@ -32,4 +32,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleExpiredInviteError(ExpiredInviteError ex){
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<String> handleInvalidTokenError(InvalidTokenException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }

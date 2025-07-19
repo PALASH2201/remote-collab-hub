@@ -95,13 +95,18 @@ public class TeamService {
         return teamMapper.toTeamResponseDto(teams);
     }
 
-    public List<Teams> getAllTeams() {
+    @Transactional
+    public List<TeamResponseDto> getAllTeams() {
         List<Teams> teams = teamsRepository.findAll();
         if (teams.isEmpty()) {
             log.error("Teams not found");
             throw new ResourceNotFoundException("Teams not found");
         }
-        return teams;
+        List<TeamResponseDto> list = new ArrayList<>();
+        for(Teams t : teams){
+            list.add(teamMapper.toTeamResponseDto(t));
+        }
+        return list;
     }
 
     @Transactional

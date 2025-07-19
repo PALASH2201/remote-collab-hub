@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Port for application connections
+      - "15672:15672" # Port for the web management UI
+    networks:
+      - ms-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   service-registry:
     build:
       context: ./serviceregistry
@@ -35,8 +49,11 @@ services:
     depends_on:
       service-registry:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
     networks:
       - ms-net
 
@@ -55,3 +72,4 @@ services:
 
 networks:
   ms-net:
+    driver: bridge
