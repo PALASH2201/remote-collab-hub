@@ -1,5 +1,6 @@
 package com.remotehub.userservice.dto.mapper;
 
+import com.remotehub.userservice.dto.response.MinimalUserResponseDto;
 import com.remotehub.userservice.dto.response.TeamMembershipResponseDto;
 import com.remotehub.userservice.dto.response.TeamResponseDto;
 import com.remotehub.userservice.dto.response.UserResponseDto;
@@ -16,6 +17,8 @@ import java.util.List;
 public interface UserMapper {
 
     UserResponseDto toUserResponseDto(User user);
+
+    MinimalUserResponseDto toMinimalUserResponseDto(User user);
 
     @Mapping(target = "createdBy", source = "createdBy.userId")
     TeamResponseDto toTeamResponseDto(Teams team);

@@ -1,5 +1,6 @@
 package com.remotehub.userservice.controller;
 
+import com.remotehub.userservice.dto.response.MinimalUserResponseDto;
 import com.remotehub.userservice.dto.response.TeamResponseDto;
 import com.remotehub.userservice.dto.response.UserResponseDto;
 import com.remotehub.userservice.service.UserService;
@@ -34,5 +35,11 @@ public class UserController {
     public ResponseEntity<UserResponseDto> getUser(){
         UserResponseDto user = userService.getUser();
         return ResponseEntity.status(200).body(user);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MinimalUserResponseDto>> getAllUsers(){
+        List<MinimalUserResponseDto> list = userService.getAllUsers();
+        return ResponseEntity.status(200).body(list);
     }
 }

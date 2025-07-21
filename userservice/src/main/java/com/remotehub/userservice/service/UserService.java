@@ -2,6 +2,7 @@ package com.remotehub.userservice.service;
 
 import com.remotehub.userservice.dto.mapper.TeamMapper;
 import com.remotehub.userservice.dto.mapper.UserMapper;
+import com.remotehub.userservice.dto.response.MinimalUserResponseDto;
 import com.remotehub.userservice.dto.response.TeamResponseDto;
 import com.remotehub.userservice.dto.response.UserResponseDto;
 import com.remotehub.userservice.entity.TeamMemberships;
@@ -66,5 +67,23 @@ public class UserService {
             throw new ResourceNotFoundException("Cannot find user with email : "+email);
         }
         return userMapper.toUserResponseDto(user);
+    }
+
+    @Transactional
+    public List<MinimalUserResponseDto> getAllUsers() {
+        try{
+            List<User> list = userRepository.findAll();
+            if(list.isEmpty()){
+                throw new ResourceNotFoundException("Cannot find Users");
+            }
+            List<MinimalUserResponseDto> reqList = new ArrayList<>();
+            for(User u : list){
+                reqList.add(userMapper.toMinimalUserResponseDto(u));
+            }
+            return reqList;
+        }catch (Exception e){
+            log.error("Error in finding users");
+            return null;
+        }
     }
 }
