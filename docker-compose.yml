@@ -70,6 +70,38 @@ services:
     networks:
       - ms-net
 
+  discussion-service:
+    build:
+      context: ./discussionservice
+    ports:
+      - "8083:8080"
+    depends_on:
+       service-registry:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    networks:
+      - ms-net
+
+  notification-service:
+    build:
+      context: ./notificationservice
+    ports:
+      - "8084:8080"
+    depends_on:
+       service-registry:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    networks:
+      - ms-net
+
 networks:
   ms-net:
     driver: bridge
