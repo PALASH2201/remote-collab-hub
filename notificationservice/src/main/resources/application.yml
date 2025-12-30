@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notificationservice
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5432/notificationService
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: paps2201
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format-sql: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+logging:
+  level:
+    com:
+      example: DEBUG
+server:
+  port: 8084
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://service-registry:8761/eureka/
