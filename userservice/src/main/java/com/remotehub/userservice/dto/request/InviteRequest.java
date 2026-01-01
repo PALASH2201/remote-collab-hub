@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Setter
 public class InviteRequest {
-    List<String> emails;
+    private List<String> emails;
 }

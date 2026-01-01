@@ -18,8 +18,8 @@ public class TeamInviteController {
     }
 
     @PostMapping("/{teamId}/invite")
-    public ResponseEntity<String> inviteMembers(@PathVariable UUID teamId, @RequestBody InviteRequest request) {
-        return inviteService.sendInvites(teamId, request.getEmails());
+    public ResponseEntity<String> inviteMembers(@PathVariable UUID teamId, @RequestBody InviteRequest inviteRequest) {
+        return inviteService.sendInvites(teamId, inviteRequest.getEmails());
     }
 
     @GetMapping("/invites/accept")

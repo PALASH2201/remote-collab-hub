@@ -1,0 +1,33 @@
+eureka:
+    client:
+        register-with-eureka: 'true'
+        service-url:
+            defaultZone: http://service-registry:8761/eureka/
+        fetch-registry: 'true'
+spring:
+    jpa:
+        properties:
+            hibernate:
+                format-sql: 'false'
+        database: postgresql
+        hibernate:
+            ddl-auto: update
+        show-sql: 'false'
+        open-in-view: 'false'
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+    application:
+        name: project-service
+    datasource:
+        password: 'paps2201'
+        driver-class-name: org.postgresql.Driver
+        username: 'postgres'
+        url: 'jdbc:postgresql://host.docker.internal:5432/projectService'
+logging:
+    level:
+        com:
+            example: DEBUG
+jwt:
+    secret:
+        key: ${SECRET_KEY}
+server:
+    port: '8081'

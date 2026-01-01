@@ -2,8 +2,6 @@ package com.remotehub.userservice.dto.response;
 
 import com.remotehub.userservice.enums.Role;
 import lombok.*;
-
-import java.util.List;
 import java.util.UUID;
 
 @Builder

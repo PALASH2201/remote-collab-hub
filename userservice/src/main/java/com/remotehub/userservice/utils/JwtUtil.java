@@ -14,9 +14,9 @@ import java.util.Map;
 @Component
 public class JwtUtil {
     @Value("${jwt.secret.key}")
-    private String secret_key;
+    private String secretKey;
     private SecretKey getSigningKey(){
-        return Keys.hmacShaKeyFor(secret_key.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String extractEmail(String token){

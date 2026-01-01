@@ -90,7 +90,7 @@ public class TeamService {
         Teams teams = teamsRepository.findById(teamId)
                 .orElseThrow(() -> {
                     log.error(TEAM_NOT_FOUND_MESSAGE, teamId);
-                    return new ResourceNotFoundException("Could not find team with id: " + teamId);
+                    return new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId);
                 });
         return teamMapper.toTeamResponseDto(teams);
     }
@@ -114,7 +114,7 @@ public class TeamService {
         Teams oldTeam = teamsRepository.findById(teamId)
                 .orElseThrow(() -> {
                    log.error(TEAM_NOT_FOUND_MESSAGE,teamId);
-                   return new ResourceNotFoundException("Could not find team with id:"+teamId);
+                   return new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE+teamId);
                 });
         try{
             oldTeam.setTeamName(request.getTeamName());
@@ -134,7 +134,7 @@ public class TeamService {
         teamsRepository.findById(teamId)
                 .orElseThrow(()-> {
                     log.error(TEAM_NOT_FOUND_MESSAGE,teamId);
-                    return new ResourceNotFoundException("Could not find team with id "+teamId);
+                    return new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE+teamId);
                 });
         try{
             teamsRepository.deleteById(teamId);
@@ -147,9 +147,9 @@ public class TeamService {
     @Transactional
     public void addNewMember(UUID teamId, UUID userId) {
         Teams team = teamsRepository.findById(teamId)
-                .orElseThrow(()->new ResourceNotFoundException("Cannot find team with id : "+teamId));
+                .orElseThrow(()->new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE+teamId));
         User user = userRepository.findById(userId)
-                .orElseThrow(()->new ResourceNotFoundException("Cannot find user with id : "+userId));
+                .orElseThrow(()->new ResourceNotFoundException("Cannot find user with id: "+userId));
         try{
             TeamMemberships membership = new TeamMemberships();
             membership.setUser(user);
@@ -174,7 +174,7 @@ public class TeamService {
     @Transactional
     public List<MemberResponseDto> getMembers(UUID teamId) {
         Teams team = teamsRepository.findById(teamId)
-                .orElseThrow(()->new ResourceNotFoundException("Cannot find team with id : "+teamId));
+                .orElseThrow(()->new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE+teamId));
         try{
             List<TeamMemberships> memberShips = team.getTeamMemberships();
             List<UserResponseDto> members = new ArrayList<>();
@@ -195,9 +195,9 @@ public class TeamService {
     @Transactional
     public void deleteMemberFromTeam(UUID teamId, UUID userId) {
         Teams team = teamsRepository.findById(teamId)
-                .orElseThrow(()->new ResourceNotFoundException("Cannot find team with id : "+teamId));
+                .orElseThrow(()->new ResourceNotFoundException(TEAM_NOT_FOUND_MESSAGE+teamId));
         User user = userRepository.findById(userId)
-                .orElseThrow(()->new ResourceNotFoundException("Cannot find user with id : "+userId));
+                .orElseThrow(()->new ResourceNotFoundException("Cannot find user with id: "+userId));
         try{
             UUID teamMemberShipID = null;
             TeamMemberships membership = null;
