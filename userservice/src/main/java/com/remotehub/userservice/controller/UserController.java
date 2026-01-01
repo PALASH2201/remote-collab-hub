@@ -42,4 +42,10 @@ public class UserController {
         List<MinimalUserResponseDto> list = userService.getAllUsers();
         return ResponseEntity.status(200).body(list);
     }
+
+    @GetMapping("/username")
+    public ResponseEntity<String> getUsername(){
+        UserResponseDto dto = userService.getUser();
+        return ResponseEntity.status(200).body(dto.getUsername());
+    }
 }

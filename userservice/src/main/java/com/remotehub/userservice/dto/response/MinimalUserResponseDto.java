@@ -13,4 +13,5 @@ public class MinimalUserResponseDto {
     private UUID userId;
     private String userFullName;
     private String userEmail;
+    private String username;
 }

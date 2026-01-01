@@ -1,14 +1,13 @@
 package com.remotehub.discussionservice.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Document(collection = "comments")
 @Getter
@@ -17,12 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Comment {
     @Id
-    private String id;
+    private ObjectId id;
     private String content;
-    private String authorId;
-    private String entityId;
+    private UUID authorId;
+    private String authorUsername;
+    private UUID entityId;
     private String entityType; // TASK, PROJECT, SPRINT
-    private String parentId;
+    private ObjectId parentId;
     private List<String> mentions;
     private Instant createdAt = Instant.now();
 }

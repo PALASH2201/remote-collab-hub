@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "notification")
@@ -17,8 +17,8 @@ import java.time.Instant;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-    private String recipientId;
+    private UUID id;
+    private String recipientUsername;
     private String type;
     private String message;
     private String link;

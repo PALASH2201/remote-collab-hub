@@ -23,6 +23,18 @@ logging:
 server:
   port: 8084
 
+task:
+  url: ${TASK_URL}
+
+project:
+  url: ${PROJECT_URL}
+
+sprint:
+  url: ${SPRINT_URL}
+
+jwt:
+  secret: ${SECRET_KEY}
+
 eureka:
   client:
     fetch-registry: true

@@ -43,6 +43,7 @@ public class AuthService {
             User user = new User();
             user.setUserEmail(request.getEmail());
             user.setUserFullName(request.getFullName());
+            user.setUsername(request.getEmail().split("@")[0]);
             user.setUserPassword(passwordEncoder.encode(request.getPassword()));
             user.setUserStatus("online");
             user.setCreatedAt(localDateTime);

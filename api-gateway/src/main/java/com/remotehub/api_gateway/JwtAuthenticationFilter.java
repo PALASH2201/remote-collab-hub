@@ -25,6 +25,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     @Value("${jwt.secret}")
     private String jwtSecret;
+    private static final String INTERNAL_CALL_HEADER = "X-Internal-Call";
 
     private static final List<String> PUBLIC_URLS = List.of(
             "/auth/login",
@@ -33,17 +34,31 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        log.info(String.valueOf(exchange.getRequest().getHeaders()));
         String path = exchange.getRequest().getURI().getPath();
         log.info(path);
+
         // Allow public paths
         if (isPublicPath(path)) {
+            return chain.filter(exchange);
+        }
+
+        // Allow trusted internal service-to-service calls
+        String internalCall = exchange.getRequest().getHeaders().getFirst(INTERNAL_CALL_HEADER);
+        if ("true".equalsIgnoreCase(internalCall)) {
+            log.info("Internal service call detected");
+            return chain.filter(exchange);
+        }
+
+        if (path.startsWith("/ws/notifications")) {
+            log.info("Allowing WebSocket/SockJS path: {}", path);
             return chain.filter(exchange);
         }
 
         // Check for Authorization header
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.error("Not authorized");
+            log.error("Not authorized, authorization header is null or not present");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
@@ -58,15 +73,20 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
             String userId = claims.getSubject();
 
+            String username = userId.contains("@")
+                    ? userId.substring(0, userId.indexOf("@"))
+                    : userId;
+
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-User-Email", userId)
+                    .header("X-Username", username)
                     .build();
             log.info("Authorized");
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
         } catch (JwtException e) {
-            log.error("Not Authorized!");
+            log.error("Not Authorized : {}",e.getMessage());
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
@@ -75,6 +95,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     private boolean isPublicPath(String path) {
         return PUBLIC_URLS.stream().anyMatch(path::startsWith);
     }
+
     private SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }

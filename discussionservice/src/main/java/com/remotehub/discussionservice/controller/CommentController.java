@@ -3,8 +3,11 @@ package com.remotehub.discussionservice.controller;
 import com.remotehub.discussionservice.entity.Comment;
 import com.remotehub.discussionservice.repository.CommentRepository;
 import com.remotehub.discussionservice.service.CommentService;
+import org.bson.types.ObjectId;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/comments")
@@ -30,6 +33,12 @@ public class CommentController {
     @GetMapping("/thread/{parentId}")
     public List<Comment> getThread(@PathVariable String parentId) {
         return commentRepository.findByParentId(parentId);
+    }
+
+    @GetMapping("/{parentId}/username")
+    public ResponseEntity<String> getParentCommentAuthorUsername(@PathVariable String parentId){
+        Comment comment = commentService.getComment(parentId);
+        return ResponseEntity.status(200).body(comment.getAuthorUsername());
     }
 }
 

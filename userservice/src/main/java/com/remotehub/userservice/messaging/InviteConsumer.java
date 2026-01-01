@@ -6,6 +6,7 @@ import com.remotehub.userservice.repository.TeamInviteRepository;
 import com.remotehub.userservice.service.InviteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ import java.util.UUID;
 @Slf4j
 public class InviteConsumer {
 
+    @Value("${frontend.base.url}")
+    private String frontendBaseUrl;
     private final TeamInviteRepository inviteRepo;
     private final InviteService inviteService;
 
@@ -33,8 +36,7 @@ public class InviteConsumer {
                 log.info("Invite {} is no longer pending. Skipping email.", inviteId);
                 return;
             }
-            String baseUrl = "http://localhost:5173";
-            String link = baseUrl + "/invites/accept?token=" + invite.getToken();
+            String link = frontendBaseUrl + "/invites/accept?token=" + invite.getToken();
             inviteService.sendEmail(invite.getEmail(), link);
         } catch (Exception e) {
             log.error("Error processing invite ID {}: {}", inviteIdStr, e.getMessage());

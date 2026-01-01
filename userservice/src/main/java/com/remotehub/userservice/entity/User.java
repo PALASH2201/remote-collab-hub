@@ -24,6 +24,7 @@ public class User {
     private String userPassword;
     private String userFullName;
     private String userStatus;
+    private String username;
     @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDateTime createdAt;

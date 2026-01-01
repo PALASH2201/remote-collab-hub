@@ -26,9 +26,7 @@ public class SpringSecurity {
                 http
                         .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/teams/exists/**").permitAll()
-                        .requestMatchers("/teams/**").authenticated()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
                 return http.build();

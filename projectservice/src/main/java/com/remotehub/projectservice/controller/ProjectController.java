@@ -4,6 +4,7 @@ import com.remotehub.projectservice.dto.request.ProjectRequest;
 import com.remotehub.projectservice.dto.response.ProjectResponse;
 import com.remotehub.projectservice.entity.Project;
 import com.remotehub.projectservice.service.ProjectService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/project")
+@Slf4j
 public class ProjectController {
     private final ProjectService projectService;
 
@@ -46,6 +48,13 @@ public class ProjectController {
     @GetMapping("/teams/{teamId}/projects")
     public ResponseEntity<List<ProjectResponse>> getProjects(@PathVariable UUID teamId){
         List<ProjectResponse> list = projectService.getProjectsByTeamId(teamId);
+        return ResponseEntity.status(200).body(list);
+    }
+
+    @GetMapping("/{projectId}/members")
+    public ResponseEntity<List<String>> getMembers(@PathVariable UUID projectId){
+        List<String> list = projectService.getProjectMembers(projectId);
+        log.info("LIST : {}", list);
         return ResponseEntity.status(200).body(list);
     }
 }

@@ -1,6 +1,7 @@
 package com.remotehub.projectservice.service;
 
 import com.remotehub.projectservice.dto.mapper.ProjectMapper;
+import com.remotehub.projectservice.dto.request.ProjectMemberRequest;
 import com.remotehub.projectservice.dto.request.ProjectRequest;
 import com.remotehub.projectservice.dto.response.ProjectResponse;
 import com.remotehub.projectservice.entity.Project;
@@ -99,15 +100,34 @@ public class ProjectService {
     public List<ProjectResponse> getProjectsByTeamId(UUID teamId) {
         try{
             List<Project> list = projectRepository.findProjectByTeamId(teamId);
-            if(list == null || list.isEmpty()) throw new RuntimeException();
+            if(list == null || list.isEmpty()) throw new ResourceNotFoundException("Cannot find projects for team with team id : "+teamId);
             List<ProjectResponse> projectResponseList = new ArrayList<>();
             for(Project p : list){
                 projectResponseList.add(projectMapper.toProjectResponse(p));
             }
             return projectResponseList;
         } catch (Exception e){
-            log.error("Cannot find projects for team with id : {}",teamId);
-            throw new ResourceNotFoundException("Cannot find projects for team with team id : "+teamId);
+            log.error("Error: {}",e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional
+    public List<String> getProjectMembers(UUID projectId) {
+        Project project = projectRepository.findById(projectId)
+                    .orElseThrow(()-> new ResourceNotFoundException("Cannot find project with id : "+ projectId));
+        UUID teamId = project.getTeamId();
+        try{
+            List<ProjectMemberRequest> members = projectInterface.getTeamMembers(teamId).getBody();
+            if(members == null || members.isEmpty()) throw new ResourceNotFoundException("Cannot find team members of team with team id : "+teamId);
+            List<String> usernames = new ArrayList<>();
+            for(ProjectMemberRequest memberRequest : members){
+                usernames.add(memberRequest.getUsername());
+            }
+            return usernames;
+        } catch (Exception e){
+            log.error("Error: {}", e.getMessage());
+            return null;
         }
     }
 }

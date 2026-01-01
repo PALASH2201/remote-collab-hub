@@ -13,9 +13,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class MemberResponseDto {
     private UUID userId;
-    private String userEmail;
     private String userFullName;
-    private String userStatus;
+    private String userEmail;
+    private String username;
     private Role role;
-    private List<TeamMembershipResponseDto> teamMemberships;
 }

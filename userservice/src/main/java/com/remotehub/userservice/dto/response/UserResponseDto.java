@@ -17,6 +17,7 @@ public class UserResponseDto {
     private String userPassword;
     private String userFullName;
     private String userStatus;
+    private String username;
     private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime lastUpdated;
