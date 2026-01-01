@@ -1,13 +1,13 @@
 package com.remotehub.discussionservice.controller;
 
+import com.remotehub.discussionservice.dto.request.CommentRequestDto;
+import com.remotehub.discussionservice.dto.response.CommentResponseDto;
 import com.remotehub.discussionservice.entity.Comment;
 import com.remotehub.discussionservice.repository.CommentRepository;
 import com.remotehub.discussionservice.service.CommentService;
-import org.bson.types.ObjectId;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/comments")
@@ -21,7 +21,7 @@ public class CommentController {
     }
 
     @PostMapping
-    public Comment createComment(@RequestBody Comment comment) {
+    public CommentResponseDto createComment(@RequestBody CommentRequestDto comment) {
         return commentService.addComment(comment);
     }
 
@@ -37,7 +37,7 @@ public class CommentController {
 
     @GetMapping("/{parentId}/username")
     public ResponseEntity<String> getParentCommentAuthorUsername(@PathVariable String parentId){
-        Comment comment = commentService.getComment(parentId);
+        CommentResponseDto comment = commentService.getComment(parentId);
         return ResponseEntity.status(200).body(comment.getAuthorUsername());
     }
 }
