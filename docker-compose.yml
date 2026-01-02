@@ -35,6 +35,23 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    networks:
+      - ms-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
   service-registry:
     build:
       context: ./serviceregistry
@@ -143,3 +160,4 @@ networks:
 
 volumes:
   postgres_data:
+  pgadmin_data:
