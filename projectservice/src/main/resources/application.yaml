@@ -18,10 +18,10 @@ spring:
     application:
         name: project-service
     datasource:
-        password: 'paps2201'
+        url: ${SPRING_DATASOURCE_URL}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
         driver-class-name: org.postgresql.Driver
-        username: 'postgres'
-        url: 'jdbc:postgresql://host.docker.internal:5432/projectService'
 logging:
     level:
         com:

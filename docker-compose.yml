@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   rabbitmq:
@@ -12,6 +12,26 @@ services:
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - ms-net
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'userService'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
       timeout: 5s
       retries: 5
 
@@ -51,9 +71,14 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/userService
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
     networks:
       - ms-net
 
@@ -65,8 +90,13 @@ services:
     depends_on:
       service-registry:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/projectService
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
     networks:
       - ms-net
 
@@ -96,12 +126,20 @@ services:
          condition: service_healthy
        rabbitmq:
          condition: service_healthy
+       postgres:
+         condition: service_healthy
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notificationService
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
     networks:
       - ms-net
 
 networks:
   ms-net:
     driver: bridge
+
+volumes:
+  postgres_data:

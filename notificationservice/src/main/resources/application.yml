@@ -1,11 +1,13 @@
 spring:
   application:
     name: notificationservice
+
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/notificationService
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: paps2201
+
   jpa:
     hibernate:
       ddl-auto: update

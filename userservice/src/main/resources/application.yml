@@ -1,0 +1,54 @@
+app:
+    rabbitmq:
+        invite-exchange: invite.exchange
+        invite-queue: invite.queue
+        invite-routing-key: invite.routingkey
+eureka:
+    client:
+        fetch-registry: true
+        register-with-eureka: true
+        service-url:
+            defaultZone: http://service-registry:8761/eureka/
+frontend:
+    base:
+        url: ${FRONTEND_BASE_URL}
+jwt:
+    secret:
+        key: ${SECRET_KEY}
+logging:
+    level:
+        com:
+            example: DEBUG
+spring:
+    application:
+        name: user-service
+    datasource:
+        url: ${SPRING_DATASOURCE_URL}
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+    jpa:
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: update
+        open-in-view: false
+        properties:
+            hibernate:
+                format-sql: false
+        show-sql: false
+    mail:
+        host: smtp.gmail.com
+        password: ${PERSONAL_MAIL_PASSWORD}
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        username: ${PERSONAL_MAIL}
+    rabbitmq:
+        host: ${SPRING_RABBITMQ_HOST:localhost}
+        password: guest
+        port: 5672
+        username: guest
