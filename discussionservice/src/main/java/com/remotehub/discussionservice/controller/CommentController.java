@@ -40,5 +40,19 @@ public class CommentController {
         CommentResponseDto comment = commentService.getComment(parentId);
         return ResponseEntity.status(200).body(comment.getAuthorUsername());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CommentResponseDto> updateComment(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        CommentResponseDto updated = commentService.updateComment(id, body.get("content"));
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable String id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 

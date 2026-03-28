@@ -2,6 +2,7 @@ package com.remotehub.projectservice.controller;
 
 import com.remotehub.projectservice.dto.request.SprintRequest;
 import com.remotehub.projectservice.dto.response.SprintResponse;
+import com.remotehub.projectservice.enums.SprintStatus;
 import com.remotehub.projectservice.service.SprintService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,13 @@ public class SprintController {
     public ResponseEntity<List<SprintResponse>> getSprints(@PathVariable UUID projectId){
         List<SprintResponse> list = sprintService.getSprintsByProjectId(projectId);
         return ResponseEntity.status(200).body(list);
+    }
+
+    @PatchMapping("/{sprintId}/status")
+    public ResponseEntity<String> transitionStatus(
+            @PathVariable UUID sprintId,
+            @RequestParam SprintStatus status) {
+        sprintService.transitionStatus(sprintId, status);
+        return ResponseEntity.ok(SUCCESS_MSG);
     }
 }

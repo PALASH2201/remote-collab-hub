@@ -129,4 +129,16 @@ public class TaskService {
             throw new ErrorUpdatingEntry("Cannot assign task to sprint");
         }
     }
+
+    @Transactional
+    public List<TaskResponse> getTasksDueSoon(int days) {
+        java.util.Date cutoff = java.util.Date.from(
+                java.time.Instant.now().plus(days, java.time.temporal.ChronoUnit.DAYS));
+        List<Task> tasks = taskRepository.findByDueDateBeforeOrderByDueDateAsc(cutoff);
+        List<TaskResponse> responses = new ArrayList<>();
+        for (Task t : tasks) {
+            responses.add(taskMapper.toTaskResponse(t));
+        }
+        return responses;
+    }
 }

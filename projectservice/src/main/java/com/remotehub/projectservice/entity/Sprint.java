@@ -1,5 +1,6 @@
 package com.remotehub.projectservice.entity;
 
+import com.remotehub.projectservice.enums.SprintStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,4 +31,6 @@ public class Sprint {
     private String sprintGoal;
     private Date startDate;
     private Date endDate;
+    @Enumerated(EnumType.STRING)
+    private SprintStatus status = SprintStatus.PLANNED;
 }

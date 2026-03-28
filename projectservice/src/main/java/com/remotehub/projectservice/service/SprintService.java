@@ -5,6 +5,7 @@ import com.remotehub.projectservice.dto.request.SprintRequest;
 import com.remotehub.projectservice.dto.response.SprintResponse;
 import com.remotehub.projectservice.entity.Project;
 import com.remotehub.projectservice.entity.Sprint;
+import com.remotehub.projectservice.enums.SprintStatus;
 import com.remotehub.projectservice.exceptions.ErrorCreatingEntry;
 import com.remotehub.projectservice.exceptions.ErrorDeletingEntry;
 import com.remotehub.projectservice.exceptions.ErrorUpdatingEntry;
@@ -15,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -108,5 +108,19 @@ public class SprintService {
             log.error("Cannot find projects for sprint with id : {}",projectId);
             throw new ResourceNotFoundException("Cannot find projects for sprint with id : "+projectId);
         }
+    }
+
+    @Transactional
+    public void transitionStatus(UUID sprintId, SprintStatus newStatus) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot find sprint with id: " + sprintId));
+        SprintStatus current = sprint.getStatus();
+        boolean valid = (current == SprintStatus.PLANNED && newStatus == SprintStatus.ACTIVE)
+                || (current == SprintStatus.ACTIVE && newStatus == SprintStatus.DONE);
+        if (!valid) {
+            throw new ErrorUpdatingEntry("Invalid transition: " + current + " -> " + newStatus);
+        }
+        sprint.setStatus(newStatus);
+        sprintRepository.save(sprint);
     }
 }

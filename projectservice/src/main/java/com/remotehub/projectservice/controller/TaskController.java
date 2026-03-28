@@ -5,6 +5,7 @@ import com.remotehub.projectservice.dto.response.TaskResponse;
 import com.remotehub.projectservice.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,5 +45,11 @@ public class TaskController {
     public ResponseEntity<String> assignTask(@PathVariable UUID sprintId,@PathVariable UUID taskId){
         taskService.assignTask(sprintId,taskId);
         return ResponseEntity.status(200).body("Success");
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<TaskResponse>> getUpcomingTasks(
+            @RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(taskService.getTasksDueSoon(days));
     }
 }

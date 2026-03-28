@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TeamInviteRepository extends JpaRepository<TeamInvite, UUID> {
-    Optional<TeamInvite> findByToken(String token);
     List<TeamInvite> findByEmailAndStatus(String email, InviteStatus status);
 }
 

@@ -19,13 +19,14 @@ public class InviteTokenUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String email, UUID teamId) {
+    public String generateToken(String email, UUID teamId, UUID inviteId) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + 1000 * 60 * 60 * 24); // 24 hours
 
         return Jwts.builder()
                 .subject(email)
-                .claim("teamId", teamId.toString())
+                .claim("inviteId", inviteId)
+                .claim("teamId", teamId)
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(getSigningKey())

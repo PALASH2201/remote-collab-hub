@@ -13,6 +13,22 @@ spring:
           uri: lb:ws://notificationservice
           predicates:
             - Path=/ws/notifications/**
+        - id: user-service
+          uri: lb://userservice
+          predicates:
+            - Path=/auth/**,/user/**,/teams/**
+        - id: project-service
+          uri: lb://projectservice
+          predicates:
+            - Path=/project/**,/sprint/**,/task/**
+        - id: discussion-service
+          uri: lb://discussionservice
+          predicates:
+            - Path=/comments/**
+        - id: notification-service
+          uri: lb://notificationservice
+          predicates:
+            - Path=/notifications/**
       globalcors:
         corsConfigurations:
           '[/**]':

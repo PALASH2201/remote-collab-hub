@@ -51,7 +51,7 @@ public class CommentService {
             event.setAuthorId(saved.getAuthorId());
             event.setEntityId(saved.getEntityId());
             event.setEntityType(saved.getEntityType());
-            event.setParentId(String.valueOf(saved.getParentId()));
+            event.setParentId(saved.getParentId() != null ? String.valueOf(saved.getParentId()) : null);
             event.setMentions(saved.getMentions());
             event.setContent(saved.getContent());
             event.setAuthHeader(authHeader);
@@ -73,6 +73,35 @@ public class CommentService {
         } catch (Exception e){
             log.error("Error : {}" , e.getMessage());
             throw new ResourceNotFoundException("Comment not found");
+        }
+    }
+    public CommentResponseDto updateComment(String id, String newContent) {
+        try {
+            ObjectId objectId = new ObjectId(id);
+            Comment comment = commentRepository.findById(objectId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
+            comment.setContent(newContent);
+            Comment saved = commentRepository.save(comment);
+            return commentMapper.toCommentResponseDto(saved);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error updating comment with id: {}", id);
+            throw new ErrorCreatingEntry("Error updating comment");
+        }
+    }
+
+    public void deleteComment(String id) {
+        try {
+            ObjectId objectId = new ObjectId(id);
+            Comment comment = commentRepository.findById(objectId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
+            commentRepository.delete(comment);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error deleting comment with id: {}", id);
+            throw new ErrorCreatingEntry("Error deleting comment");
         }
     }
 }

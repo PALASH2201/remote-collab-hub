@@ -40,6 +40,7 @@ public class NotificationListener {
     @RabbitListener(queues = "comment.added.queue")
     public void handleCommentAdded(CommentAddedEvent event) {
         try{
+            log.info("Event: {}",event);
             String authorUsername = event.getAuthorUsername();
             Set<String> recipients = new HashSet<>();
 
@@ -51,7 +52,7 @@ public class NotificationListener {
                 recipients.addAll(event.getMentions());
             }
             
-            if(event.getParentId() != null){
+            if(event.getParentId() != null && !event.getParentId().equals("null")){
                 String parentCommentAuthorUsername = discussionInterface.getParentCommentAuthorUsername(event.getParentId()).getBody();
                 recipients.add(parentCommentAuthorUsername);
             }
@@ -61,7 +62,7 @@ public class NotificationListener {
             for (String username : recipients) {
                 Notification notif = new Notification();
                 notif.setRecipientUsername(username);
-                if(event.getParentId() != null) notif.setType("REPLY_TO_OLD_COMMENT");
+                if(event.getParentId() != null && !event.getParentId().equals("null")) notif.setType("REPLY_TO_OLD_COMMENT");
                 else notif.setType("NEW_COMMENT_ADDED");
                 notif.setMessage(event.getContent());
                 notif.setLink(buildLink(event));
@@ -78,7 +79,7 @@ public class NotificationListener {
         }
     }
 
-    public String buildLink(CommentAddedEvent event){
+    private String buildLink(CommentAddedEvent event){
         if(event.getEntityType().equals("TASK")){
             return taskUrl;
         }else if(event.getEntityType().equals("SPRINT")){

@@ -5,6 +5,7 @@ import com.remotehub.userservice.entity.User;
 import com.remotehub.userservice.enums.InviteStatus;
 import com.remotehub.userservice.exceptions.ExpiredInviteError;
 import com.remotehub.userservice.exceptions.InvalidTokenException;
+import com.remotehub.userservice.exceptions.ResourceNotFoundException;
 import com.remotehub.userservice.messaging.InviteProducer;
 import com.remotehub.userservice.repository.TeamInviteRepository;
 import com.remotehub.userservice.repository.UserRepository;
@@ -47,23 +48,26 @@ public class InviteService {
         try{
             List<TeamInvite> invitesToCreate = new ArrayList<>();
             for (String email : emails) {
-                String token = tokenUtil.generateToken(email, teamId);
                 TeamInvite invite = new TeamInvite();
                 invite.setEmail(email);
                 invite.setTeamId(teamId);
-                invite.setToken(token);
                 invite.setStatus(InviteStatus.PENDING);
                 invite.setCreatedAt(LocalDateTime.now());
                 invite.setExpiresAt(LocalDateTime.now().plusDays(1));
                 invitesToCreate.add(invite);
             }
             List<TeamInvite> savedInvites = inviteRepo.saveAll(invitesToCreate);
+            for (TeamInvite saved : savedInvites){
+                String token = tokenUtil.generateToken(saved.getEmail(),saved.getTeamId(),saved.getId());
+                saved.setToken(token);
+            }
+            inviteRepo.saveAll(savedInvites);
             for (TeamInvite invite : savedInvites) {
                 inviteProducer.sendInviteMessage(invite.getId());
             }
             return new ResponseEntity<>("Invites are being processed and will be sent shortly.", HttpStatus.ACCEPTED);
         } catch(Exception e){
-            return new ResponseEntity<>("Error sending invites",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error sending invites ",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -81,11 +85,12 @@ public class InviteService {
             Claims claims = tokenUtil.parseToken(token);
 
             String email = claims.getSubject();
-            UUID teamId = UUID.fromString((String) claims.get("teamId"));
+            UUID teamId = (UUID) claims.get("teamId");
+            UUID inviteId = (UUID) claims.get("inviteId");
 
-            TeamInvite invite = inviteRepo.findByToken(token)
-                    .orElseThrow(() -> new InvalidTokenException("Invalid token"));
-
+            TeamInvite invite = inviteRepo.findById(inviteId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Invite not found!"));
+            log.info("Invite : {} ", invite.getId());
             if (invite.getStatus() != InviteStatus.PENDING) {
                 throw new ExpiredInviteError("Invite already used or expired");
             }
@@ -103,6 +108,7 @@ public class InviteService {
             inviteRepo.save(invite);
             return new ResponseEntity<>("Invite accepted successfully!", HttpStatus.OK);
         } catch(RuntimeException e){
+            log.error("Error: {}", e.getMessage());
             return new ResponseEntity<>("Error in accepting team invite",HttpStatus.BAD_REQUEST);
         }
     }
